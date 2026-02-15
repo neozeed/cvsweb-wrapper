@@ -28,16 +28,22 @@ if (length($qs) > $max_query_length) {
     exit;
 }
 
-# Normalize noisy parameters (collapse bot permutations)
-$qs =~ s/(annotate|sortby|f|only_with_tag)=[^&]+//g;
-$qs =~ s/&&/&/g;
-$qs =~ s/^&//;
-$qs =~ s/&$//;
+## Normalize noisy parameters (collapse bot permutations)
+#$qs =~ s/(annotate|sortby|f|only_with_tag)=[^&]+//g;
+#$qs =~ s/&&/&/g;
+#$qs =~ s/^&//;
+#$qs =~ s/&$//;
 
 # Build normalized cache key
-my $key = $script;
-$key .= "?$qs" if $qs ne '';
+#my $key = $script;
+#$key .= "?$qs" if $qs ne '';
+#$key =~ s/[^A-Za-z0-9]/_/g;
+my $uri = $ENV{'REQUEST_URI'} // '';
+exit if length($uri) > 300;  # sanity cap
+
+my $key = $uri;
 $key =~ s/[^A-Za-z0-9]/_/g;
+
 
 my $cache_file = "$cache_dir/$key.html";
 
