@@ -4,6 +4,17 @@ use warnings;
 use Fcntl ':flock';
 use File::Path qw(make_path);
 
+# --- dump early stupidity
+my $qs = $ENV{'QUERY_STRING'} // '';
+
+if ($qs =~ /(sortby|annotate|r1=|r2=|content-type=|\.diff)/i) {
+    print "Status: 403 Forbidden\n\n";
+    print "Content-Type: text/plain\n\n";
+    print "Diff and annotate views are temporarily disabled.\n";
+    exit;
+}
+
+
 # ----------------------------------------------------
 # CONFIG
 # ----------------------------------------------------
@@ -78,6 +89,7 @@ if (-f $cache_file) {
         print while (<$fh>);
         close($fh);
         close($lock);
+	unlink $lock_file;
         exit;
     }
 }
@@ -114,6 +126,7 @@ if ($body =~ m/<html/i &&
 }
 
 close($lock);
+unlink $lock_file;
 
 # ----------------------------------------------------
 # OUTPUT RESPONSE
