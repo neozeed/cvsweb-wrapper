@@ -7,10 +7,15 @@ use File::Path qw(make_path);
 # --- dump early stupidity
 my $qs = $ENV{'QUERY_STRING'} // '';
 
-if ($qs =~ /(sortby|annotate|r1=|r2=|content-type=|\.diff)/i) {
-    print "Status: 403 Forbidden\n\n";
+if (index($qs, 'sortby') >= 0
+ || index($qs, 'annotate') >= 0
+ || index($qs, 'r1=') >= 0
+ || index($qs, 'r2=') >= 0
+ || index($qs, '.diff') >= 0) {
+
+    print "Status: 403 Forbidden\n";
     print "Content-Type: text/plain\n\n";
-    print "Diff and annotate views are temporarily disabled.\n";
+    print "Diff/annotate views temporarily disabled.\n";
     exit;
 }
 
